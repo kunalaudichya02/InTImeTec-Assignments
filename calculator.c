@@ -19,7 +19,7 @@ int performOperation(int a, int b, char op) {
 //to check the validity of the expression
 int isValidExpression(const char *expression) {
       int size = strlen(expression);
-    // if (size == 0) return 0;
+      
 
      int prevWasOperator = 0;
 
