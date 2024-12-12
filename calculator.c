@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 
-int calculate(int a, int b, char op) {
+int performOperation(int a, int b, char op) {
     if (op == '+') return a + b;
     if (op == '-') return a - b;
     if (op == '*') return a * b;
@@ -17,9 +17,9 @@ int calculate(int a, int b, char op) {
 }
 
 //to check the validity of the expression
-int verifyData(const char *expression) {
+int isValidExpression(const char *expression) {
       int size = strlen(expression);
-    if (size == 0) return 0;
+    // if (size == 0) return 0;
 
      int prevWasOperator = 0;
 
@@ -27,6 +27,11 @@ int verifyData(const char *expression) {
     char ch = expression[i];
 
      if (isspace(ch)) continue; 
+
+     if( i ==0 && (ch == '*' || ch == '/')){ //to check if the first character is '*' or '/' (invalid)
+        printf("Error: Expression cannot start with '*' or '/' \n");
+        return 0;
+     }
 
      if (!(isdigit(ch) || ch == '+' || ch == '-' || ch == '*' || ch == '/')) { //to check valid characters
      return 0;
@@ -76,7 +81,7 @@ int solve(const char *expression) {
                 if ((ch == '*' || ch == '/') && (operators[opsTop] == '+' || operators[opsTop] == '-')) break;
                  int b = numbers[numsTop--];
                  int a = numbers[numsTop--];
-                numbers[++numsTop] = calculate(a, b, operators[opsTop--]); 
+                numbers[++numsTop] = performOperation(a, b, operators[opsTop--]); 
             }
             operators[++opsTop] = ch; // to push the current operator
         }
@@ -89,7 +94,7 @@ int solve(const char *expression) {
     while (opsTop >= 0) {
         int b = numbers[numsTop--];
         int a = numbers[numsTop--];
-        numbers[++numsTop] = calculate(a, b, operators[opsTop--]);
+        numbers[++numsTop] = performOperation(a, b, operators[opsTop--]);
     }
     return numbers[numsTop];
 }
@@ -99,7 +104,22 @@ int main() {
     printf("enter an expression: ");
     fgets(expression, 100, stdin);
 
-     if (verifyData(expression)) {
+    int j = 0;
+    for(int i = 0; expression[i] != '\0'; i++){
+        if(!isspace(expression[i])){
+            expression[j++] = expression[i];
+        }
+    }
+    expression[j] = '\0';
+
+
+    int size = strlen(expression);
+    if(size == 0){
+        printf("Input cannot be empty");
+        return 0;
+    }
+
+     if (isValidExpression(expression)) {
         int result = solve(expression);
         printf("your result is  %d\n", result);
     } else {
