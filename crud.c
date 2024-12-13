@@ -4,8 +4,7 @@
 
 typedef struct {
     int id;
-    char first_name[100];
-    char last_name[100];
+    char name[100];
     int age;
 } UserData;
 
@@ -16,10 +15,16 @@ void createNewUser() {
 
     FILE *file = fopen("user_data.txt", "r");
 
+    if (file == NULL)
+    {
+        printf("Unable to open the file for reading\n");
+        return;
+    }
+
     printf("Please enter User ID: ");
     scanf("%d", &id);
 
-    while (fscanf(file, "%d %s %s %d", &user.id, user.first_name, user.last_name, &user.age) != EOF) {
+    while (fscanf(file, "%d %[^\t\n] %d", &user.id, user.name, &user.age) != EOF) {
         if (user.id == id) {
             exists = 1;
             printf("User ID already taken. Please try another one\n");
@@ -43,20 +48,27 @@ void createNewUser() {
     getchar(); 
 
 
-    printf("Enter First Name: ");
-    fgets(user.first_name, 100, stdin);
-    user.first_name[strcspn(user.first_name, "\n")] = '\0';
-
-    printf("Enter Last Name: ");
-    fgets(user.last_name, 100, stdin);
-    user.last_name[strcspn(user.last_name, "\n")] = '\0';
-
-    printf("Enter Age: ");
-    scanf("%d", &user.age);
+    printf("Enter name: ");
+    fgets(user.name, 100, stdin);
+    user.name[strcspn(user.name, "\n")] = '\0';
 
 
+    int validAge = 0;
+    while(!validAge){
+        printf("Enter Age: ");
+        if(scanf("%d", &user.age) != 1){
+            printf("Invalid input. Please enter a valid integer.\n");
+            while(getchar()!= '\n');
+             continue;
+        }
+        else{
+            validAge = 1;
+        }
+    }
 
-    fprintf(file, "%d %s %s %d\n", user.id, user.first_name, user.last_name, user.age);
+
+
+    fprintf(file, "%d\t%s\t%d\n", user.id, user.name, user.age);
     fclose(file);
     printf("the user is successfully added\n");
 }
@@ -64,18 +76,27 @@ void createNewUser() {
 //function to display all the users in the text file
 void displayAllUsers() {
     FILE *file = fopen("user_data.txt", "r");
+     if (file == NULL)
+    {
+        printf("Error opening file.\n");
+        return;
+    }
     UserData user;
-
+    int foundUser = 0;
     printf("\n--- User List ---\n");
 
-    while (fscanf(file, "%d %s %s %d", &user.id, user.first_name, user.last_name, &user.age) != EOF) {
+    while (fscanf(file, "%d %[^\t\n] %d", &user.id, user.name, &user.age) != EOF) {
+        foundUser = 1;
         printf("{\n");
         printf("    User ID: %d\n", user.id);
-        printf("    Name: %s %s\n", user.first_name, user.last_name);
+        printf("    Name: %s \n", user.name);
         printf("    Age: %d\n", user.age);
         printf("}\n");
     }
 
+    if(!foundUser){
+        printf("No user found  \n");
+    }
     fclose(file);
 }
 
@@ -86,25 +107,40 @@ void updateUser() {
     FILE *file = fopen("user_data.txt", "r");
     FILE *temp_file = fopen("temp_file.txt", "w");
 
+    if (file == NULL || temp_file == NULL)
+    {
+        printf("Error opening file.\n");
+        return;
+    }
+
     printf("Enter User ID to modify: ");
     scanf("%d", &id);
     getchar();
 
-    while (fscanf(file, "%d %s %s %d", &user.id, user.first_name, user.last_name, &user.age) != EOF) {
+    while (fscanf(file, "%d %[^\t\n] %d", &user.id, user.name, &user.age) != EOF) {
         if (user.id == id) {
             exists = 1;
-            printf("Enter new First Name: ");
-            fgets(user.first_name, 100, stdin);
-            user.first_name[strcspn(user.first_name, "\n")] = '\0';
+            printf("User ID found. Please enter the new details:\n");
+            printf("Enter new name: ");
+            fgets(user.name, 100, stdin);
+            user.name[strcspn(user.name, "\n")] = '\0';
 
-            printf("Enter new Last Name: ");
-            fgets(user.last_name, 100, stdin);
-            user.last_name[strcspn(user.last_name, "\n")] = '\0';
+            int validAge=0;
+            while(!validAge){
+                printf("Enter new age: ");
+                if(scanf("%d", &user.age) != 1){
+                    printf("Invalid input. Please enter a valid integer.\n");
+                    while(getchar()!= '\n');
+                    continue;
+                }
+            else
+            {
+                validAge = 1;
+            }
+            }
 
-            printf("Enter new Age: ");
-            scanf("%d", &user.age);
         }
-        fprintf(temp_file, "%d %s %s %d\n", user.id, user.first_name, user.last_name, user.age);
+        fprintf(temp_file, "%d\t%s\t%d\n", user.id, user.name, user.age);
     }
 
     fclose(file);
@@ -127,15 +163,21 @@ void removeUser() {
     FILE *file = fopen("user_data.txt", "r");
     FILE *temp_file = fopen("temp_file.txt", "w");
 
+     if (file == NULL || temp_file == NULL)
+    {
+        printf("Error opening file.\n");
+        return;
+    }
+
     printf("Enter User ID to delete: ");
     scanf("%d", &id);
 
-    while (fscanf(file, "%d %s %s %d", &user.id, user.first_name, user.last_name, &user.age) != EOF) {
+    while (fscanf(file, "%d %[^\t\n] %d", &user.id, user.name, &user.age) != EOF) {
         if (user.id == id) {
             exists = 1;
             continue;
         }
-        fprintf(temp_file, "%d %s %s %d\n", user.id, user.first_name, user.last_name, user.age); 
+        fprintf(temp_file, "%d\t%s\t%d\n", user.id, user.name, user.age); 
     }
 
     fclose(file);
@@ -159,7 +201,7 @@ int main() {
     }
     fclose(file);
 
-    int choice;
+    int choice=0;
 
   
 
@@ -171,8 +213,20 @@ int main() {
             printf("3. Edit User Details\n");
             printf("4. Remove a User\n");
             printf("5. Exit\n");
-        printf("Please enter your choice: ");
-        scanf("%d", &choice);
+            
+
+        int validChoice=0;
+        if(!validChoice){
+            printf("Please enter your choice: ");
+            if(scanf("%d", &choice) != 1){
+                printf("Invalid input. Please enter a valid integer ");
+                while(getchar()!= '\n');
+                continue;
+            }
+            else{
+                validChoice = 1;
+            }
+        }
 
         switch (choice) {
             case 1:
