@@ -8,8 +8,7 @@ int isValidDigit(char ch)
 {
     if (ch >= '0' && ch <= '9')
         return 1;
-    else
-        return 0;
+    else return 0;
 }
 
 // function to check if the character is a white space
