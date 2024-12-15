@@ -50,7 +50,12 @@ void createNewUser() {
 
     printf("Enter name: ");
     fgets(user.name, 100, stdin);
-    user.name[strcspn(user.name, "\n")] = '\0';
+    for(int i=0; user.name[i] != '\0'; i++){
+        if(user.name[i] == '\n'){
+            user.name[i] == '\0';
+            break;
+        }
+    }
 
 
     int validAge = 0;
@@ -59,10 +64,15 @@ void createNewUser() {
         if(scanf("%d", &user.age) != 1){
             printf("Invalid input. Please enter a valid integer.\n");
             while(getchar()!= '\n');
-             continue;
         }
         else{
-            validAge = 1;
+             if (user.age < 0) {
+                 printf("Age cannot be negative. Please enter a valid age.\n");
+           } else if (user.age > 120) {
+                 printf("Age seems too high. Please enter a realistic age.\n");
+           } else {
+                 validAge = 1; 
+           }
         }
     }
 
@@ -123,7 +133,12 @@ void updateUser() {
             printf("User ID found. Please enter the new details:\n");
             printf("Enter new name: ");
             fgets(user.name, 100, stdin);
-            user.name[strcspn(user.name, "\n")] = '\0';
+             for(int i=0; user.name[i] != '\0'; i++){
+                if(user.name[i] == '\n'){
+                user.name[i] == '\0';
+                break;
+              }
+              }
 
             int validAge=0;
             while(!validAge){
@@ -131,13 +146,18 @@ void updateUser() {
                 if(scanf("%d", &user.age) != 1){
                     printf("Invalid input. Please enter a valid integer.\n");
                     while(getchar()!= '\n');
-                    continue;
                 }
-            else
-            {
-                validAge = 1;
-            }
-            }
+                 else
+                {
+                    if (user.age < 0) {
+                        printf("Age cannot be negative. Please enter a valid age.\n");
+                    } else if (user.age > 120) {
+                        printf("Age seems too high. Please enter a realistic age.\n");
+                    } else {
+                        validAge = 1; 
+                    }
+                }
+                }
 
         }
         fprintf(temp_file, "%d\t%s\t%d\n", user.id, user.name, user.age);
