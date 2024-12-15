@@ -206,7 +206,6 @@ int main() {
   
 
     while (choice != 5) {
-
             printf("\n--- User Management Menu ---\n");
             printf("1. Add a New User\n");
             printf("2. View All Users\n");
