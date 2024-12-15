@@ -202,9 +202,6 @@ int main() {
     fclose(file);
 
     int choice=0;
-
-  
-
     while (choice != 5) {
             printf("\n--- User Management Menu ---\n");
             printf("1. Add a New User\n");
