@@ -69,6 +69,10 @@ int dequeue(queue *q) {
     return popped;
 }
 
+int queueIsEmpty(queue *q) {
+    return isEmpty(q->s1) && isEmpty(q->s2);
+}
+
 int peek(queue *q) {
     if (isEmpty(q->s2)) {
         while (!isEmpty(q->s1)) {
@@ -118,13 +122,12 @@ int main() {
     queueInit(q, size);
 
     int n=0;
-    while (n!=6) {
+    while (n!=5) {
         printf("\n\n1. Enqueue: Add an element to the queue.\n");
         printf("2. Dequeue: Remove the front element from the queue.\n");
         printf("3. Peek: Retrieve the front element without removing it.\n");
         printf("4. isEmpty: Check if the queue is empty.\n");
-        printf("5. Size: Return the number of elements in the queue.\n");
-        printf("6. Exit the program.\n");
+        printf("5. Exit the program.\n");
 
         printf("Enter an operation: ");
 
@@ -158,12 +161,17 @@ int main() {
                 }
                 break;
             }
-            case 4:
-                display(q);
+            case 4:{
+                int x = queueIsEmpty(q);
+                if(x ==0){
+                    printf("Queue is not empty\n");
+                }
+                display(q);}
                 break;
             case 5:
                 printf("Exiting...\n");
                 return 0;
         }
     }
+    return 0;
 }
