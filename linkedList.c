@@ -6,6 +6,24 @@ typedef struct Node{
     struct Node * next;
 } node;
 
+
+int isEmpty(node* head){
+    if(head == NULL){
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+node* getNodeAtIndex(node *head, int index) {
+    node *temp = head;
+    for (int i = 1; i < index && temp!= NULL; i++) {
+        if (temp == NULL) return NULL;
+        temp = temp->next;
+    }
+    return temp;
+}
 node * insertAtBegin(node *head, int n){
 
     node* ptr = (node*)malloc(sizeof(node));
@@ -41,69 +59,42 @@ node * insertAtEnd(node *head, int n){
     return head;
 }
 node * insertAtIndex(node *head, int x, int n){
+    if (x == 1) { 
+        return insertAtBegin(head, n);
+    }
+    node* prev = getNodeAtIndex(head, x-1);
+
+    if(prev == NULL){
+        printf("Invalid position\n");
+        return head;
+    }
     node* ptr = (node*)malloc(sizeof(node));
     if(ptr == NULL){
-        printf("Memory allocation failed");
+        printf("Memory allocation failed\n");
         return head;
     }
-
     ptr->data = n;
-
-    if (x == 1) { 
-        ptr->next = head;
-        head = ptr;
-        return head;
-    }
-
-    node* temp = head;
-
-    for(int i=1; i<x-1; i++){
-        if (temp == NULL) {  
-            printf("Invalid position\n");
-            free(ptr);
-            return head;
-        }
-        temp = temp->next;
-    }
-    if (temp->next == NULL){  
-        printf("Invalid position\n");
-        free(ptr);
-        return head;
-    }
-    ptr->next = temp->next;
-    temp->next = ptr;
+    ptr->next = prev->next;
+    prev->next = ptr;
 
     return head;
 }
 node * updateAtIndex(node *head, int x, int n){
-    if (head == NULL) {
+    if (isEmpty(head)) {
         printf("The list is empty\n");
         return head;
     }
-    node* temp = head;
-
-    if (x == 1) { 
-        head->data = n;
+    node* target = getNodeAtIndex(head, x);
+    if(target == NULL){
+        printf("Invalid Index\n");
         return head;
     }
-    for(int i=1; i<x; i++){
-        if (temp == NULL) {  
-            printf("Invalid position\n");
-            return head;
-        }
-        temp = temp->next;
-    }
-    if(temp== NULL){
-        printf("Invalid position\n");
-        return head;
-    }
-    
-    temp->data = n;
+    target->data = n;
 
     return head;
 }
 node * deleteFirst(node *head){
-    if (head == NULL) {
+    if (isEmpty(head)) {
         printf("List is empty\n");
         return head; 
     }
@@ -113,7 +104,7 @@ node * deleteFirst(node *head){
     return head;
 }
 node * deleteLast (node *head){
-    if (head == NULL) {
+    if (isEmpty(head)) {
         printf("List is empty\n");
         return head; 
     }
@@ -134,7 +125,7 @@ node * deleteLast (node *head){
     return head;
 }
 node * deleteAtIndex(node *head, int x){
-    if (head == NULL) {
+    if (isEmpty(head)) {
         printf("List is empty\n");
         return head; 
     }
@@ -143,27 +134,20 @@ node * deleteAtIndex(node *head, int x){
         return head;
     }
     node *temp = head;
-    for(int i=1; i<x-1; i++){
-        if (temp == NULL) {  
-            printf("Invalid position\n");
-            return head;
-        }
-        temp = temp->next;
-    }
-
-    if(temp->next == NULL){
-        printf("Invalid position\n");
+    node* prev = getNodeAtIndex(head, x-1);
+    if(prev == NULL|| prev->next == NULL){
+        printf("Invalid Index\n");
         return head;
     }
-    node *remove = temp->next;
-    temp->next = remove->next;
+    node *remove = prev->next;
+    prev->next = remove->next;
     free(remove);
     return head;
 }
-node * display(node *head){
-    if (head == NULL) {
+void display(node *head){
+    if (isEmpty(head)) {
         printf("List is empty\n");
-        return head; 
+        return; 
     }
     node *temp = head;
     while(temp != NULL){
@@ -172,7 +156,6 @@ node * display(node *head){
     }
     printf("\n");
 
-    return head;
 }
 int main(){
     node * head = NULL;
@@ -207,7 +190,7 @@ int main(){
             break;
 
             case 4:
-                head = display(head);
+                display(head);
             break;
 
             case 5:{
